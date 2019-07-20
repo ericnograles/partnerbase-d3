@@ -266,7 +266,7 @@ export default {
         { tid: 4, sid: 16 }
       ],
       options: {
-        force: 3000,
+        force: 1500,
         nodeSize: SIZES.INDIRECT_LINK,
         nodeLabels: true,
         linkWidth: 2,
@@ -289,23 +289,6 @@ export default {
     await Promise.all(
       this.nodes.map(node => this.createPatterns(defs, node.data.website))
     );
-    // let pattern = document.createElementNS(
-    //   "http://www.w3.org/2000/svg",
-    //   "pattern"
-    // );
-    // let image = await this.createImageForSvg("google.com", SIZES.SELECTED_NODE);
-
-    // let image = document.createElementNS("http://www.w3.org/2000/svg", "image");
-    // image.setAttribute("x", 0);
-    // image.setAttribute("y", 0);
-    // image.setAttribute("href", "/_nuxt/assets/google-transparent.png");
-    // image.setAttribute("height", SIZES.SELECTED_NODE);
-    // image.setAttribute("width", SIZES.SELECTED_NODE);
-
-    // pattern.setAttribute("id", "google.com--selected");
-    // pattern.setAttribute("patternUnits", "objectBoundingBox");
-    // pattern.setAttribute("height", 1);
-    // pattern.setAttribute("width", 1);
 
     // let background = document.createElementNS(
     //   "http://www.w3.org/2000/svg",
@@ -320,7 +303,6 @@ export default {
     //   pattern.appendChild(image);
     // }
     // pattern.appendChild(background);
-    // defs.appendChild(pattern);
 
     // See: http://bl.ocks.org/SpaceActuary/25e72aadac28f2c87667816e82c609db
     this.replaceDefs(defs);
@@ -337,6 +319,17 @@ export default {
           pattern.setAttribute("patternUnits", "objectBoundingBox");
           pattern.setAttribute("height", 1);
           pattern.setAttribute("width", 1);
+
+          let background = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle"
+          );
+          background.setAttribute("r", SIZES[key] / 2);
+          background.setAttribute("fill", COLORS[key]);
+          background.setAttribute("cx", SIZES[key] / 2);
+          background.setAttribute("cy", SIZES[key] / 2);
+          pattern.appendChild(background)
+          
           let image = await this.createImageForSvg(domain, SIZES[key]);
           if (image) {
             pattern.appendChild(image);
@@ -347,7 +340,7 @@ export default {
     },
     async createImageForSvg(domain, size) {
       try {
-        let url = `https://logo.clearbit.com/${domain}?size=${size}`;
+        let url = `https://logo.clearbit.com/${domain}`;
         let response = await fetch(url);
         if (response.status !== 200) {
           throw new Exception(`Clearbit Logo not found`);
@@ -414,19 +407,28 @@ export default {
             otherNode._cssClass = "node--selected";
             otherNode._labelClass = "node__label--selected";
             otherNode._svgAttrs = {
-              fill: "url(#google.com--selected)",
+              fill: `url(#${otherNode.data.website}--selected)`,
               style: null
             };
           } else {
+            otherNode._color = null;
             otherNode._size = SIZES.DIRECT_LINK;
             otherNode._cssClass = "node--direct-link";
             otherNode._labelClass = "node__label--direct-link";
+            otherNode._svgAttrs = {
+              fill: `url(#${otherNode.data.website}--direct-link)`,
+              style: null
+            };
           }
         } else {
-          otherNode._color = COLORS.INDIRECT_LINK;
+          // otherNode._color = COLORS.INDIRECT_LINK;
           otherNode._size = SIZES.INDIRECT_LINK;
           otherNode._cssClass = "node";
           otherNode._labelClass = "node__label";
+          otherNode._svgAttrs = {
+              fill: `url(#${otherNode.data.website}--indirect-link)`,
+              style: null
+            };
         }
         return otherNode;
       });
