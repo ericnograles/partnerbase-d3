@@ -290,22 +290,9 @@ export default {
       this.nodes.map(node => this.createPatterns(defs, node.data.website))
     );
 
-    // let background = document.createElementNS(
-    //   "http://www.w3.org/2000/svg",
-    //   "circle"
-    // );
-    // background.setAttribute("r", SIZES.SELECTED_NODE / 2);
-    // background.setAttribute("fill", COLORS.DIRECT_LINK);
-    // background.setAttribute("cx", SIZES.SELECTED_NODE / 2);
-    // background.setAttribute("cy", SIZES.SELECTED_NODE / 2);
-
-    // if (image) {
-    //   pattern.appendChild(image);
-    // }
-    // pattern.appendChild(background);
-
     // See: http://bl.ocks.org/SpaceActuary/25e72aadac28f2c87667816e82c609db
     this.replaceDefs(defs);
+    this.select()
   },
   methods: {
     async createPatterns(defs, domain) {
@@ -335,6 +322,17 @@ export default {
           let image = await this.createImageForSvg(domain, SIZES[key]);
           if (image) {
             pattern.appendChild(image);
+          } else {
+            let text = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "text"
+            );
+            text.setAttribute('font-size', SIZES[key] / 2)
+            text.setAttribute('x', SIZES[key] / 3)
+            text.setAttribute('y', SIZES[key] / 1.5)
+            text.innerHTML = domain.slice(0, 1).toUpperCase()
+            pattern.appendChild(text)
+            background.setAttribute("fill", 'var(--grey5)');
           }
           defs.appendChild(pattern);
         })
@@ -384,7 +382,7 @@ export default {
         .filter(node => this.links.find(link => link.sid === selectedNode.id))
         .map(node => node.data);
     },
-    select(node) {
+    select(node = {}) {
       this.links.forEach(link => {
         if (link.sid === node.id || link.tid === node.id) {
           link._svgAttrs = { "stroke-width": 5 };
