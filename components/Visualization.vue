@@ -26,8 +26,8 @@ const COLORS = {
 
 const SIZES = {
   SELECTED_NODE: 60,
-  DIRECT_LINK: 30,
-  INDIRECT_LINK: 30
+  DIRECT_LINK: 40,
+  INDIRECT_LINK: 20
 };
 
 export default {
@@ -325,9 +325,11 @@ export default {
             "circle"
           );
           background.setAttribute("r", SIZES[key] / 2);
-          background.setAttribute("fill", COLORS[key]);
+          background.setAttribute("fill", '#fff');
           background.setAttribute("cx", SIZES[key] / 2);
           background.setAttribute("cy", SIZES[key] / 2);
+          background.setAttribute("stroke", 'gray');
+          background.setAttribute("stroke-width", '2');
           pattern.appendChild(background)
           
           let image = await this.createImageForSvg(domain, SIZES[key]);
@@ -383,7 +385,7 @@ export default {
         .map(node => node.data);
     },
     select(node) {
-      this.links = this.links.map(link => {
+      this.links.forEach(link => {
         if (link.sid === node.id || link.tid === node.id) {
           link._svgAttrs = { "stroke-width": 5 };
           link._color = COLORS.DIRECT_LINK;
@@ -391,16 +393,16 @@ export default {
           link._svgAttrs = { "stroke-width": 2 };
           link._color = null;
         }
-        return link;
       });
-      this.nodes = this.nodes.map(otherNode => {
+
+      this.nodes.forEach(otherNode => {
         let linkExists = this.links.find(
           link =>
             (link.sid === node.id && link.tid === otherNode.id) ||
             (link.tid === node.id && link.sid === otherNode.id)
         );
         if (linkExists || otherNode.id === node.id) {
-          otherNode._color = COLORS.DIRECT_LINK;
+          // otherNode._color = COLORS.DIRECT_LINK;
           if (otherNode.id === node.id) {
             otherNode._color = null;
             otherNode._size = SIZES.SELECTED_NODE;
@@ -430,7 +432,6 @@ export default {
               style: null
             };
         }
-        return otherNode;
       });
     }
   }
