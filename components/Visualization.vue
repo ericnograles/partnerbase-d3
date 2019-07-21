@@ -27,7 +27,7 @@ const COLORS = {
 const SIZES = {
   SELECTED_NODE: 60,
   DIRECT_LINK: 40,
-  INDIRECT_LINK: 20
+  INDIRECT_LINK: 30
 };
 
 export default {
@@ -274,16 +274,6 @@ export default {
       }
     };
   },
-  computed: {
-    company() {
-      return this.graph.root_companies[0];
-    },
-    allied_company() {
-      return this.graph.root_companies.length > 1
-        ? this.graph.root_companies[1]
-        : null;
-    }
-  },
   async mounted() {
     let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     await Promise.all(
@@ -315,8 +305,8 @@ export default {
           background.setAttribute("fill", '#fff');
           background.setAttribute("cx", SIZES[key] / 2);
           background.setAttribute("cy", SIZES[key] / 2);
-          background.setAttribute("stroke", 'gray');
-          background.setAttribute("stroke-width", '2');
+          // background.setAttribute("stroke", 'var(--grey3)');
+          // background.setAttribute("stroke-width", '2');
           pattern.appendChild(background)
           
           let image = await this.createImageForSvg(domain, SIZES[key]);
@@ -422,7 +412,7 @@ export default {
         } else {
           // otherNode._color = COLORS.INDIRECT_LINK;
           otherNode._size = SIZES.INDIRECT_LINK;
-          otherNode._cssClass = "node";
+          otherNode._cssClass = "node--indirect-link";
           otherNode._labelClass = "node__label";
           otherNode._svgAttrs = {
               fill: `url(#${otherNode.data.website}--indirect-link)`,
@@ -440,10 +430,12 @@ export default {
   width: 100vw;
 }
 .link {
-  stroke: var(--navy);
+  stroke: var(--grey5);
 }
 .node {
   color: var(--navy);
+  stroke: var(--grey3);
+  stroke-width: 2px;
   &:hover {
     stroke: var(--yellow);
     stroke-width: 4px;
