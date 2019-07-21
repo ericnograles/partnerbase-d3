@@ -266,7 +266,7 @@ export default {
         { tid: 4, sid: 16 }
       ],
       options: {
-        force: 1500,
+        force: 6000,
         nodeSize: SIZES.INDIRECT_LINK,
         nodeLabels: true,
         linkWidth: 2,
@@ -328,6 +328,7 @@ export default {
               "text"
             );
             text.setAttribute('font-size', SIZES[key] / 2)
+            text.setAttribute('font-weight', 500)
             text.setAttribute('x', SIZES[key] / 3)
             text.setAttribute('y', SIZES[key] / 1.5)
             text.innerHTML = domain.slice(0, 1).toUpperCase()
@@ -356,8 +357,6 @@ export default {
         image.setAttribute("width", size);
         return image;
       } catch (exception) {
-        // If Clearbit 404's, do not create an image tag
-        console.log(exception);
         return null;
       }
     },
@@ -437,7 +436,8 @@ export default {
 </script>
 <style lang="scss">
 .net {
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
 }
 .link {
   stroke: var(--navy);
